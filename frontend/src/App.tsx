@@ -8,6 +8,7 @@ import ProtectedRoute from './UI/ProtectedRoute/ProtectedRoute';
 import PhotoForm from './features/Photos/components/PhotoForm/PhotoForm';
 import { useAppSelector } from './app/hooks';
 import { selectUser } from './features/User/userSlice';
+import PhotosUser from './features/Photos/PhotosUser';
 
 const App = () => {
   const user = useAppSelector(selectUser);
@@ -19,7 +20,7 @@ const App = () => {
       <Container maxWidth="xl" component="main">
         <Routes>
           <Route path="/" element={<Photos />} />
-          <Route path="/photos/:id" element={<Photos />} />
+          <Route path="/photos/:id" element={<PhotosUser />} />
           <Route
             path="/photos/new"
             element={

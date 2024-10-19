@@ -3,10 +3,12 @@ import { Avatar, Grid, IconButton, Menu, MenuItem, Stack, Typography } from '@mu
 import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import CollectionsIcon from '@mui/icons-material/Collections';
 import { useAppDispatch } from '../../app/hooks';
 import { User } from '../../types';
 import { API_URL } from '../../constants';
 import { logout } from '../../features/User/usersThunks';
+import { getPhotos } from '../../features/Photos/photosThunks';
 
 interface Props {
   user: User;
@@ -30,6 +32,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
 
   const handleLogout = async () => {
     await dispatch(logout());
+    await dispatch(getPhotos());
     navigate('/');
   };
 
@@ -44,10 +47,18 @@ const UserMenu: React.FC<Props> = ({ user }) => {
       <Menu open={isOpen} anchorEl={anchorEl} onClose={handleClose} keepMounted>
         <MenuItem
           onClick={() => {
-            navigate('/photos/new/');
+            navigate('/photos/' + user._id);
           }}
         >
           <AddAPhotoIcon sx={{ mr: 2 }} />
+          My gallery
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate('/photos/new/');
+          }}
+        >
+          <CollectionsIcon sx={{ mr: 2 }} />
           Add new photo
         </MenuItem>
         <MenuItem onClick={handleLogout}>
