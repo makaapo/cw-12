@@ -53,40 +53,42 @@ const PhotoCard: React.FC<Props> = ({ photo, onDialog }) => {
           />
         )}
         <CardContent>
-          <Typography gutterBottom variant="h5" component="div" textAlign="center">
+          <Typography variant="h5" component="div" textAlign="center">
             {photo.title}
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActionArea>
-        <Typography
-          variant="h6"
-          component={Link}
-          to={`/photos/${photo.author._id}`}
-          textAlign="center"
-          sx={{
-            display: 'block',
-            padding: '8px',
-            textDecoration: 'underline',
-            textUnderlineOffset: '5px',
-            color: 'primary.main',
-            transition: 'transform 0.3s',
-            '&:hover': {
-              textDecoration: 'none',
-              transform: 'scale(1.05)',
-            },
-          }}
-        >
-          Created by: {photo.author.displayName}
-        </Typography>
-      </CardActionArea>
-      <CardContent>
-        {(user && user.role === 'admin') || (user && user._id === photo.author._id) ? (
+      {!id ? (
+        <CardActionArea>
+          <Typography
+            variant="h6"
+            component={Link}
+            to={`/photos/${photo.author._id}`}
+            textAlign="center"
+            sx={{
+              display: 'block',
+              padding: '8px',
+              textDecoration: 'underline',
+              textUnderlineOffset: '5px',
+              color: 'primary.main',
+              transition: 'transform 0.3s',
+              '&:hover': {
+                textDecoration: 'none',
+                transform: 'scale(1.05)',
+              },
+            }}
+          >
+            Created by: {photo.author.displayName}
+          </Typography>
+        </CardActionArea>
+      ) : null}
+      {(user && user.role === 'admin') || (user && user._id === photo.author._id) ? (
+        <CardContent>
           <Button onClick={onDelete} fullWidth variant="contained" color="secondary" sx={{ mt: 1 }} disabled={deleting}>
             {deleting ? <CircularProgress size={24} /> : 'Delete'}
           </Button>
-        ) : null}
-      </CardContent>
+        </CardContent>
+      ) : null}
     </Card>
   );
 };

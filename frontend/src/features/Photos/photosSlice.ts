@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Photo } from '../../types';
-import { createPhoto, getPhotos, getPhotosByAuthor } from './photosThunks';
+import { Photo, ValidationError } from '../../types';
+import { createPhoto, deletePhoto, getPhotos, getPhotosByAuthor } from './photosThunks';
 
 interface InitialState {
   photos: Photo[];
   userPhotos: Photo[];
   isLoading: boolean;
   createLoading: boolean;
+  deleteLoading: boolean;
+  createError: ValidationError | null;
 }
 
 const initialState: InitialState = {
@@ -14,6 +16,8 @@ const initialState: InitialState = {
   userPhotos: [],
   isLoading: false,
   createLoading: false,
+  deleteLoading: false,
+  createError: null,
 };
 
 export const PhotoSlice = createSlice({
@@ -49,8 +53,18 @@ export const PhotoSlice = createSlice({
     builder.addCase(createPhoto.fulfilled, (state) => {
       state.createLoading = false;
     });
-    builder.addCase(createPhoto.rejected, (state) => {
+    builder.addCase(createPhoto.rejected, (state, { payload: error }) => {
       state.createLoading = false;
+      state.createError = error || null;
+    });
+    builder.addCase(deletePhoto.pending, (state) => {
+      state.deleteLoading = true;
+    });
+    builder.addCase(deletePhoto.fulfilled, (state) => {
+      state.deleteLoading = false;
+    });
+    builder.addCase(deletePhoto.rejected, (state) => {
+      state.deleteLoading = false;
     });
   },
   selectors: {
@@ -58,9 +72,18 @@ export const PhotoSlice = createSlice({
     selectPhotos: (state) => state.photos,
     selectPhotosFetching: (state) => state.isLoading,
     selectPhotoCreateLoading: (state) => state.createLoading,
+    selectPhotoDeleteLoading: (state) => state.deleteLoading,
+    selectCreateError: (state) => state.createError,
   },
 });
 
 export const PhotosReducer = PhotoSlice.reducer;
 
-export const { selectUserPhotos, selectPhotos, selectPhotosFetching, selectPhotoCreateLoading } = PhotoSlice.selectors;
+export const {
+  selectPhotoDeleteLoading,
+  selectUserPhotos,
+  selectPhotos,
+  selectPhotosFetching,
+  selectPhotoCreateLoading,
+  selectCreateError,
+} = PhotoSlice.selectors;
