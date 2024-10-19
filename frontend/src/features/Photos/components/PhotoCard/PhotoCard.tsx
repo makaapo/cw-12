@@ -1,8 +1,12 @@
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Button, Card, CardActionArea, CardContent, CardMedia, CircularProgress, Typography } from '@mui/material';
+import { Link, useParams } from 'react-router-dom';
 import { API_URL } from '../../../../constants';
 import { Photo } from '../../../../types';
 import React from 'react';
+import { selectUser } from '../../../User/userSlice';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
+import { selectPhotoDeleteLoading } from '../../photosSlice';
+import { deletePhoto, getPhotos, getPhotosByAuthor } from '../../photosThunks';
 
 interface Props {
   photo: Photo;
@@ -10,13 +14,12 @@ interface Props {
 }
 
 const PhotoCard: React.FC<Props> = ({ photo, onDialog }) => {
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const deleting = useAppSelector(selectPhotoDeleteLoading);
 
   const ImgUrl = photo.image ? `${API_URL}/${photo.image}` : '';
-
-  const onClickNavigate = () => {
-    navigate('/photos/' + photo.author._id);
-  };
 
   const handleDialogOpen = () => {
     if (ImgUrl) {
@@ -24,9 +27,22 @@ const PhotoCard: React.FC<Props> = ({ photo, onDialog }) => {
     }
   };
 
+  const onDelete = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete this photo?');
+
+    if (confirmed) {
+      await dispatch(deletePhoto(photo._id));
+      if (id?.length) {
+        await dispatch(getPhotosByAuthor(id));
+      } else {
+        await dispatch(getPhotos());
+      }
+    }
+  };
+
   return (
-    <Card sx={{ maxWidth: 345, margin: '20px auto', boxShadow: 3, borderRadius: 2 }}>
-      <CardActionArea sx={{ paddingX: 4 }} onClick={handleDialogOpen}>
+    <Card sx={{ width: 300, margin: '20px auto', boxShadow: 3, borderRadius: 2 }}>
+      <CardActionArea onClick={handleDialogOpen}>
         {ImgUrl && (
           <CardMedia
             component="img"
@@ -42,11 +58,35 @@ const PhotoCard: React.FC<Props> = ({ photo, onDialog }) => {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActionArea onClick={onClickNavigate}>
-        <Typography variant="h6" component="div" textAlign="center" sx={{ padding: '8px' }}>
+      <CardActionArea>
+        <Typography
+          variant="h6"
+          component={Link}
+          to={`/photos/${photo.author._id}`}
+          textAlign="center"
+          sx={{
+            display: 'block',
+            padding: '8px',
+            textDecoration: 'underline',
+            textUnderlineOffset: '5px',
+            color: 'primary.main',
+            transition: 'transform 0.3s',
+            '&:hover': {
+              textDecoration: 'none',
+              transform: 'scale(1.05)',
+            },
+          }}
+        >
           Created by: {photo.author.displayName}
         </Typography>
       </CardActionArea>
+      <CardContent>
+        {(user && user.role === 'admin') || (user && user._id === photo.author._id) ? (
+          <Button onClick={onDelete} fullWidth variant="contained" color="secondary" sx={{ mt: 1 }} disabled={deleting}>
+            {deleting ? <CircularProgress size={24} /> : 'Delete'}
+          </Button>
+        ) : null}
+      </CardContent>
     </Card>
   );
 };

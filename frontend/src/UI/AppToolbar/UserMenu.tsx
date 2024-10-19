@@ -50,7 +50,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
             navigate('/photos/' + user._id);
           }}
         >
-          <AddAPhotoIcon sx={{ mr: 2 }} />
+          <CollectionsIcon sx={{ mr: 2 }} />
           My gallery
         </MenuItem>
         <MenuItem
@@ -58,7 +58,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
             navigate('/photos/new/');
           }}
         >
-          <CollectionsIcon sx={{ mr: 2 }} />
+          <AddAPhotoIcon sx={{ mr: 2 }} />
           Add new photo
         </MenuItem>
         <MenuItem onClick={handleLogout}>

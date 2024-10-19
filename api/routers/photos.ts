@@ -4,6 +4,7 @@ import auth, { RequestWithUser } from '../middleware/auth';
 import Photo from '../models/Photo';
 import permit from '../middleware/permit';
 import mongoose from 'mongoose';
+import roleForUser from '../middleware/roleForUser';
 
 const photoRouter = express.Router();
 
@@ -36,6 +37,30 @@ photoRouter.post('/', auth, permit('admin', 'user'), imagesUpload.single('image'
       return res.status(400).send(error);
     }
     next(error);
+  }
+});
+
+photoRouter.delete('/:id', roleForUser, async (req, res, next) => {
+  const user = (req as RequestWithUser).user;
+  try {
+    const photo = await Photo.findById(req.params.id);
+
+    if (!photo) {
+      return res.status(404).send({ message: 'Photo not found' });
+    }
+
+    if (user?.role === 'admin' || photo.author.equals(user?._id)) {
+      const deleted = await Photo.deleteOne({ _id: req.params.id });
+      if (deleted.deletedCount === 1) {
+        return res.send({ message: 'Photo deleted' });
+      } else {
+        return res.status(500).send({ message: 'Error deleting photo' });
+      }
+    } else {
+      return res.status(403).send({ message: 'No permission to delete this photo' });
+    }
+  } catch (error) {
+    return next(error);
   }
 });
 
