@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Button, CircularProgress, Container, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { PhotoMutation } from '../../../../types';
 import { createPhoto } from '../../photosThunks';
 import FileInput from '../../../../UI/FileInput/FileInput';
-import { selectPhotoCreateLoading } from '../../photosSlice';
+import { selectCreateError, selectPhotoCreateLoading } from '../../photosSlice';
 
 const PhotoForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const error = useAppSelector(selectCreateError);
   const loading = useAppSelector(selectPhotoCreateLoading);
   const [state, setState] = useState<PhotoMutation>({
     title: '',
@@ -38,18 +39,20 @@ const PhotoForm = () => {
     });
   };
 
+  const getFieldError = (fieldName: string) => {
+    return error?.errors[fieldName]?.message;
+  };
+
   const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
-    if (files) {
-      setState((prevState) => ({
-        ...prevState,
-        [name]: files[0],
-      }));
-    }
+    setState((prevState) => ({
+      ...prevState,
+      [name]: files && files[0] ? files[0] : null,
+    }));
   };
 
   return (
-    <form autoComplete="off" onSubmit={submitFormHandler}>
+    <Box component="form" noValidate onSubmit={submitFormHandler}>
       <Container maxWidth="sm">
         <Paper sx={{ padding: 4, mt: 4, boxShadow: 3 }}>
           <Typography variant="h4" textAlign="center" gutterBottom>
@@ -66,20 +69,22 @@ const PhotoForm = () => {
                 required
                 variant="outlined"
                 sx={{ backgroundColor: '#f9f9f9', borderRadius: '4px' }}
+                error={Boolean(getFieldError('title'))}
+                helperText={getFieldError('title')}
               />
             </Grid>
             <Grid item xs={12}>
-              <FileInput label="Image" onChange={fileInputChangeHandler} name="image" />
+              <FileInput label="Image" onChange={fileInputChangeHandler} name="image" getFieldError={getFieldError} />
             </Grid>
             <Grid item xs={12} textAlign="center">
-              <Button type="submit" fullWidth variant="contained" color="primary" disabled={loading || !state.image}>
+              <Button type="submit" fullWidth variant="contained" color="primary" disabled={loading}>
                 {loading ? <CircularProgress size={24} /> : 'Create'}
               </Button>
             </Grid>
           </Grid>
         </Paper>
       </Container>
-    </form>
+    </Box>
   );
 };
 

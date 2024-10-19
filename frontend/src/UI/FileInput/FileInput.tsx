@@ -5,9 +5,10 @@ interface Props {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   name: string;
   label: string;
+  getFieldError: (name: string) => string | undefined;
 }
 
-const FileInput: React.FC<Props> = ({ onChange, name, label }) => {
+const FileInput: React.FC<Props> = ({ onChange, name, label, getFieldError }) => {
   const [filename, setFilename] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -37,9 +38,11 @@ const FileInput: React.FC<Props> = ({ onChange, name, label }) => {
               width: '100%',
             }}
             label={label}
-            InputProps={{ readOnly: true }}
             value={filename}
             onClick={activateInput}
+            error={Boolean(getFieldError('image') || getFieldError('avatar'))}
+            helperText={getFieldError('image') || getFieldError('avatar')}
+            required
           />
         </Grid>
         <Grid item>

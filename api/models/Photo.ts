@@ -16,11 +16,11 @@ const PhotoSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
+    required: [true, 'Title must be provided'],
   },
   image: {
     type: String,
-    required: true,
+    required: [true, 'Image must be provided'],
   },
 });
 

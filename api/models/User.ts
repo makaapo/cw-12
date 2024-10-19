@@ -10,7 +10,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email must be provided!'],
     unique: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,5})+$/, 'Please fill a valid email address'],
     validate: {
@@ -28,7 +28,7 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
 
   password: {
     type: String,
-    required: true,
+    required: [true, 'Password must be provided!'],
   },
   token: {
     type: String,
@@ -47,7 +47,7 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
   googleID: String,
   avatar: {
     type: String,
-    required: true,
+    required: [true, 'Avatar must be provided!'],
   },
 });
 

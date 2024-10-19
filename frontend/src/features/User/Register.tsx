@@ -41,16 +41,12 @@ const Register = () => {
       await dispatch(register(state)).unwrap();
       navigate('/');
     } catch (e) {
-      throw new Error();
+      console.error(e);
     }
   };
 
   const getFieldError = (fieldName: string) => {
-    try {
-      return error?.errors[fieldName].message;
-    } catch {
-      return undefined;
-    }
+    return error?.errors[fieldName]?.message;
   };
 
   return (
@@ -113,10 +109,10 @@ const Register = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <FileInput label="Avatar" name="avatar" onChange={fileInputChangeHandler} />
+            <FileInput label="Avatar" name="avatar" onChange={fileInputChangeHandler} getFieldError={getFieldError} />
           </Grid>
         </Grid>
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading || !state.avatar}>
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
           {loading ? <CircularProgress size={24} /> : 'Sign up'}
         </Button>
         <Link component={RouterLink} to="/login" variant="body2">

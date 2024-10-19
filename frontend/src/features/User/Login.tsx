@@ -45,14 +45,14 @@ const Login = () => {
         Sign in
       </Typography>
       {error && (
-        <Alert severity="error" sx={{ mt: 3 }}>
+        <Alert severity="error" sx={{ my: 3 }}>
           {error.error}
         </Alert>
       )}
       <Box>
         <LoginGoogle />
       </Box>
-      <Box component="form" onSubmit={submitFormHandler} sx={{ mt: 3 }}>
+      <Box component="form" noValidate onSubmit={submitFormHandler} sx={{ mt: 3 }}>
         <Grid container direction="column" spacing={2}>
           <Grid item>
             <TextField

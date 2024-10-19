@@ -15,9 +15,6 @@ const googleClient = new OAuth2Client(config.google.clientId);
 
 usersRouter.post('/', imagesUpload.single('avatar'), async (req, res, next) => {
   try {
-    if (!req.body.email || !req.body.password) {
-      return res.status(400).send({ error: 'Username and password are required!' });
-    }
     const user = new User({
       email: req.body.email,
       password: req.body.password,
@@ -40,12 +37,9 @@ usersRouter.post('/', imagesUpload.single('avatar'), async (req, res, next) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    if (!req.body.email || !req.body.password) {
-      return res.status(400).send({ error: 'Username and password are required!' });
-    }
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(400).send({ error: 'Username or Password not found!' });
+      return res.status(400).send({ error: 'Invalid credentials. please try again' });
     }
     const isMatch = await user.checkPassword(req.body.password);
     if (!isMatch) {
