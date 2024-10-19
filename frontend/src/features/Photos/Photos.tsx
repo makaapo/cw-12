@@ -3,7 +3,7 @@ import { CircularProgress, Container, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectPhotos, selectPhotosFetching } from './photosSlice';
 import { getPhotos } from './photosThunks';
-import DialogWindow from './DialogWindow/DialogWindow';
+import DialogWindow from './components/DialogWindow/DialogWindow';
 import PhotoCard from './components/PhotoCard/PhotoCard';
 
 const Photos = () => {

@@ -3,7 +3,7 @@ import { CircularProgress, Container, Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { selectPhotosFetching, selectUserPhotos } from './photosSlice';
 import { getPhotosByAuthor } from './photosThunks';
-import DialogWindow from './DialogWindow/DialogWindow';
+import DialogWindow from './components/DialogWindow/DialogWindow';
 import PhotoCard from './components/PhotoCard/PhotoCard';
 import { useParams } from 'react-router-dom';
 
